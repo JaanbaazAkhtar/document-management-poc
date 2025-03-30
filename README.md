@@ -31,40 +31,6 @@ The Document Management System provides a comprehensive solution for managing do
 * **Class-validator:** DTO validation.
 * **Jest:** Testing framework.
 
-## Project Structure
-
-document-management/
-├── auth-service/
-│   ├── auth.module.ts
-│   ├── auth.service.ts
-│   ├── auth.controller.ts
-│   ├── jwt.strategy.ts
-│   └── entities/
-│       └── user.entity.ts
-├── user-service/
-│   ├── user.module.ts
-│   ├── user.service.ts
-│   ├── user.controller.ts
-│   └── entities/
-│       └── user.entity.ts
-├── document-service/
-│   ├── document.module.ts
-│   ├── document.service.ts
-│   ├── document.controller.ts
-│   └── entities/
-│       └── document.entity.ts
-├── ingestion-status-service/
-│   ├── ingestion-status.module.ts
-│   ├── ingestion-status.service.ts
-│   ├── ingestion-status.controller.ts
-│   └── entities/
-│       └── ingestion-status.entity.ts
-├── main.ts
-├── app.module.ts
-├── .env
-├── package.json
-└── README.md
-
 ## Setup
 
 1.  **Clone the Repository:**

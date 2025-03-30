@@ -32,44 +32,6 @@ The Document Management System provides a comprehensive solution for managing do
 * **Jest:** Testing framework.
 
 ## Project Structure
-Absolutely! Let's create an exhaustive README.md file for your document management project.
-
-Markdown
-
-# Document Management System
-
-This repository contains the backend for a robust document management system built with NestJS, designed with a microservices architecture for scalability and maintainability.
-
-## About
-
-The Document Management System provides a comprehensive solution for managing documents, including uploading, storing, processing, and tracking their ingestion status. It features user authentication, role-based access control (RBAC), and asynchronous document processing via RabbitMQ. This system is designed to handle a large volume of documents efficiently, making it suitable for enterprise-level applications.
-
-## Features
-
-* **User Authentication and Authorization:** Secure user management with JWT-based authentication and role-based access control.
-* **Document Upload and Storage:** Ability to upload various document types (PDF, DOC, DOCX, TXT) with secure storage.
-* **Asynchronous Document Ingestion:** Document processing is handled asynchronously using RabbitMQ for improved performance.
-* **Ingestion Status Tracking:** Real-time tracking of document ingestion status (pending, processing, completed, failed).
-* **Microservices Architecture:** Scalable and maintainable system with separate services for authentication, users, documents, and ingestion status.
-* **Robust Error Handling and Validation:** Comprehensive input validation and error handling for reliability.
-* **Database Integration:** Persistent data storage using PostgreSQL.
-* **File Uploads:** Multer for file uploads.
-* **Configuration:** NestJS ConfigModule for environment variable management.
-
-## Technology Stack
-
-* **NestJS:** Backend framework.
-* **TypeScript:** Programming language.
-* **TypeORM:** Object-Relational Mapping (ORM).
-* **PostgreSQL:** Database.
-* **RabbitMQ:** Message broker.
-* **JWT:** JSON Web Tokens for authentication.
-* **Multer:** File upload middleware.
-* **Bcrypt:** Password hashing.
-* **Class-validator:** DTO validation.
-* **Jest:** Testing framework.
-
-## Project Structure
 
 document-management/
 ├── auth-service/

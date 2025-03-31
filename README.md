@@ -17,6 +17,7 @@ The Document Management System provides a comprehensive solution for managing do
 * **Database Integration:** Persistent data storage using PostgreSQL.
 * **File Uploads:** Multer for file uploads.
 * **Configuration:** NestJS ConfigModule for environment variable management.
+* **API Documentation:** Interactive API documentation via Swagger UI.
 
 ## Technology Stack
 
@@ -30,6 +31,7 @@ The Document Management System provides a comprehensive solution for managing do
 * **Bcrypt:** Password hashing.
 * **Class-validator:** DTO validation.
 * **Jest:** Testing framework.
+* **Swagger:** API documentation.
 
 ## Setup
 
@@ -93,6 +95,10 @@ The Document Management System provides a comprehensive solution for managing do
         npm run test:e2e
         ```
 
+3.  **Access Swagger UI:**
+
+    * Once the application is running, you can access the interactive API documentation via Swagger UI at `http://localhost:3000/api`. This interface allows you to easily explore and test all available API endpoints.
+
 ## Project Flow
 
 1.  **User Authentication:** Users register and log in via the `auth-service`, receiving a JWT for authenticated requests.
@@ -104,6 +110,8 @@ The Document Management System provides a comprehensive solution for managing do
 7.  **Document Retrieval:** Authenticated users can retrieve stored documents via the `document-service`.
 
 ## API Endpoints
+
+All API endpoints can be explored and tested via the Swagger UI available at `http://localhost:3000/api`.
 
 ### Auth Service
 
@@ -141,5 +149,4 @@ The Document Management System provides a comprehensive solution for managing do
 * Ensure RabbitMQ and PostgreSQL are running before starting the application.
 * This backend is designed to work with a separate document processing service that consumes RabbitMQ messages.
 * Security best practices should be followed, especially in production environments.
-
-This `README.md` provides a comprehensive overview of your document management system, making it easier for developers to understand, set up, and use your project.
+* All API endpoints can be checked and tested via the Swagger UI at `http://localhost:3000/api`.

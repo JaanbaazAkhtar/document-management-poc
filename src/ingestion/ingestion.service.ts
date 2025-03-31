@@ -10,7 +10,11 @@ export class IngestionStatusService {
     private ingestionStatusRepository: Repository<IngestionStatus>,
   ) {}
 
-  async create(documentId: number, status: string, message?: string): Promise<IngestionStatus> {
+  async create(
+    documentId: number,
+    status: string,
+    message?: string,
+  ): Promise<IngestionStatus> {
     const ingestionStatus = this.ingestionStatusRepository.create({
       documentId,
       status,
@@ -27,10 +31,16 @@ export class IngestionStatusService {
     return this.ingestionStatusRepository.findOne({ where: { documentId } });
   }
 
-  async update(documentId: number, status: string, message?: string): Promise<IngestionStatus> {
+  async update(
+    documentId: number,
+    status: string,
+    message?: string,
+  ): Promise<IngestionStatus> {
     const ingestionStatus = await this.findOne(documentId);
     if (!ingestionStatus) {
-      throw new NotFoundException(`Ingestion status for document ${documentId} not found`);
+      throw new NotFoundException(
+        `Ingestion status for document ${documentId} not found`,
+      );
     }
     await this.ingestionStatusRepository.update({ documentId }, { status, message });
     return this.findOne(documentId);
@@ -39,8 +49,25 @@ export class IngestionStatusService {
   async remove(documentId: number): Promise<void> {
     const ingestionStatus = await this.findOne(documentId);
     if (!ingestionStatus) {
-      throw new NotFoundException(`Ingestion status for document ${documentId} not found`);
+      throw new NotFoundException(
+        `Ingestion status for document ${documentId} not found`,
+      );
     }
     await this.ingestionStatusRepository.delete({ documentId });
+  }
+
+  async updateIngestionStatus(
+    documentId: number,
+    status: string,
+    message?: string,
+  ): Promise<IngestionStatus> {
+    const ingestionStatus = await this.findOne(documentId);
+    if (!ingestionStatus) {
+      throw new NotFoundException(
+        `Ingestion status for document ${documentId} not found`,
+      );
+    }
+    await this.ingestionStatusRepository.update({ documentId }, { status, message });
+    return this.findOne(documentId);
   }
 }

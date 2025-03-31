@@ -9,7 +9,8 @@ import { RegisterDto } from './dto/register.dto';
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User) private usersRepository: Repository<User>,
+    @InjectRepository(User) 
+    private readonly usersRepository: Repository<User>,
     private jwtService: JwtService,
   ) {}
 
@@ -37,10 +38,20 @@ export class AuthService {
     }
 
     const passwordHash = await bcrypt.hash(registerDto.password, 10);
-    const user = this.usersRepository.create({
-      ...registerDto,
-      passwordHash,
-    });
-    return this.usersRepository.save(user);
+
+    const user = new User();
+    user.username = registerDto.username;
+    user.role = registerDto.role;
+    user.passwordHash = passwordHash;
+
+    console.log('User object before save:', user); // Add this line
+
+    try {
+      const savedUser = await this.usersRepository.save(user);
+      return savedUser;
+    } catch (error) {
+      console.error('Error saving user:', error);
+      throw error; // Re-throw the error to be handled by NestJS
+    }
   }
 }

@@ -20,6 +20,7 @@ env.config();
       database: process.env.DB_DATABASE,
       autoLoadEntities: true,
       synchronize: true,
+      logging: true
     }),
     UsersModule,
     AuthModule,

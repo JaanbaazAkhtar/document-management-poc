@@ -1,18 +1,19 @@
 import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Document } from '../entities/document.entity';
-import { ClientProxy } from '@nestjs/microservices';
+import { Document } from './entities/document.entity';
 import { CreateDocumentDto } from './dto/create-document.dto';
 import { UpdateDocumentDto } from './dto/update-document.dto';
-import { UsersService } from '../user/user.service'; // Import UsersService
+import { UsersService } from '../user/user.service';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class DocumentsService {
   constructor(
-    @InjectRepository(Document) private documentsRepository: Repository<Document>,
+    @InjectRepository(Document)
+    private documentRepository: Repository<Document>,
+    private usersService: UsersService,
     @Inject('INGESTION_SERVICE') private client: ClientProxy,
-    private usersService: UsersService, // Inject UsersService
   ) {}
 
   async create(createDocumentDto: CreateDocumentDto, userId: number): Promise<Document> {
@@ -20,20 +21,21 @@ export class DocumentsService {
     if (!user) {
       throw new NotFoundException(`User with ID ${userId} not found`);
     }
-    const document = this.documentsRepository.create({
+
+    const document = this.documentRepository.create({
       ...createDocumentDto,
       uploadedBy: user,
       ingestionStatus: 'pending',
     });
-    return this.documentsRepository.save(document);
+    return this.documentRepository.save(document);
   }
 
   async findAll(): Promise<Document[]> {
-    return this.documentsRepository.find({ relations: ['uploadedBy'] });
+    return this.documentRepository.find();
   }
 
-  async findOne(id: number): Promise<Document> {
-    const document = await this.documentsRepository.findOne({ where: { id }, relations: ['uploadedBy'] });
+  async findOne(id: number): Promise<Document | undefined> {
+    const document = await this.documentRepository.findOne({ where: { id }, relations: ['uploadedBy'] });
     if (!document) {
       throw new NotFoundException(`Document with ID ${id} not found`);
     }
@@ -41,7 +43,11 @@ export class DocumentsService {
   }
 
   async update(id: number, updateDocumentDto: UpdateDocumentDto): Promise<Document> {
-    await this.documentsRepository.update(id, updateDocumentDto);
+    const document = await this.findOne(id);
+    if (!document) {
+      throw new NotFoundException(`Document with ID ${id} not found`);
+    }
+    await this.documentRepository.update(id, updateDocumentDto);
     return this.findOne(id);
   }
 
@@ -50,19 +56,26 @@ export class DocumentsService {
     if (!document) {
       throw new NotFoundException(`Document with ID ${id} not found`);
     }
-    await this.documentsRepository.delete(id);
+    await this.documentRepository.delete(id);
   }
 
-  async triggerIngestion(documentId: number): Promise<void> {
-    const document = await this.findOne(documentId);
+  async triggerIngestion(id: number) {
+    const document = await this.findOne(id);
+    if (!document) {
+      throw new NotFoundException(`Document with ID ${id} not found`);
+    }
+
+    this.client.emit('ingestion_trigger', { documentId: id });
+    await this.documentRepository.update(id, { ingestionStatus: 'processing' });
+    return this.findOne(id);
+  }
+
+  async updateIngestionStatus(documentId: number, status: string, message?: string): Promise<Document> {
+    const document = await this.documentRepository.findOne({ where: { id: documentId } });
     if (!document) {
       throw new NotFoundException(`Document with ID ${documentId} not found`);
     }
-    this.client.emit('ingest_document', { documentId: document.id, filePath: document.filePath });
-    await this.update(documentId, { ingestionStatus: 'processing' });
-  }
-
-  async updateIngestionStatus(documentId: number, status: string): Promise<Document> {
-    return this.update(documentId, { ingestionStatus: status });
+    await this.documentRepository.update(documentId, { ingestionStatus: status, ingestionMessage: message });
+    return this.findOne(documentId);
   }
 }

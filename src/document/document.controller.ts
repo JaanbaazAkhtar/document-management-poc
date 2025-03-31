@@ -6,11 +6,16 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 import { extname } from 'path';
-import { diskStorage, Multer } from 'multer'
+import { Express } from 'express';
+import { Multer } from 'multer';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiCreatedResponse, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 
 @Controller('documents')
 @UseGuards(JwtAuthGuard, RolesGuard)
+@ApiBearerAuth()
+@ApiTags('documents')
 export class DocumentsController {
   constructor(private readonly documentsService: DocumentsService) {}
 
@@ -34,6 +39,19 @@ export class DocumentsController {
       }
     },
   }))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiCreatedResponse({ description: 'The document has been successfully uploaded.' })
   async uploadFile(@UploadedFile() file: Multer.File, @Req() req) {
     if (!file) {
       throw new HttpException('No file uploaded', HttpStatus.BAD_REQUEST);
@@ -45,41 +63,41 @@ export class DocumentsController {
     return this.documentsService.create(createDocumentDto, req.user.id);
   }
 
+  @Post(':id/trigger-ingestion')
+  @Roles('admin')
+  @ApiParam({ name: 'id', description: 'Document ID' })
+  @ApiOkResponse({ description: 'Ingestion triggered successfully.' })
+  async triggerIngestion(@Param('id') id: string) {
+    return this.documentsService.triggerIngestion(+id);
+  }
+
   @Get()
-  @Roles('viewer', 'editor', 'admin')
+  @ApiOkResponse({ description: 'List of all documents.' })
   findAll() {
     return this.documentsService.findAll();
   }
 
   @Get(':id')
-  @Roles('viewer', 'editor', 'admin')
+  @ApiOkResponse({ description: 'A single document.' })
   findOne(@Param('id') id: string) {
     return this.documentsService.findOne(+id);
   }
 
   @Patch(':id')
   @Roles('editor', 'admin')
+  @ApiParam({ name: 'id', description: 'Document ID' })
+  @ApiBody({ type: UpdateDocumentDto })
+  @ApiOkResponse({ description: 'Document updated successfully.' })
   update(@Param('id') id: string, @Body() updateDocumentDto: UpdateDocumentDto) {
     return this.documentsService.update(+id, updateDocumentDto);
   }
 
   @Delete(':id')
-  @Roles('admin')
+  @Roles('editor', 'admin')
+  @Roles('editor', 'admin')
+  @ApiParam({ name: 'id', description: 'Document ID' })
+  @ApiOkResponse({ description: 'Document deleted successfully.' })
   remove(@Param('id') id: string) {
     return this.documentsService.remove(+id);
-  }
-
-  @Post(':id/ingest')
-  @Roles('editor', 'admin')
-  async triggerIngestion(@Param('id') id: string) {
-    await this.documentsService.triggerIngestion(+id);
-    return { message: 'Ingestion triggered' };
-  }
-
-  @Patch(':id/ingestion-status')
-  @Roles('admin')
-  async updateIngestionStatus(@Param('id') id: string, @Body() { status }: { status: string }) {
-    await this.documentsService.updateIngestionStatus(+id, status);
-    return { message: 'Ingestion status updated' };
   }
 }

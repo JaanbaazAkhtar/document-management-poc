@@ -10,6 +10,7 @@ export class IngestionStatusService {
     private ingestionStatusRepository: Repository<IngestionStatus>,
   ) {}
 
+  //function to create ingestion status
   async create(
     documentId: number,
     status: string,
@@ -31,6 +32,7 @@ export class IngestionStatusService {
     return this.ingestionStatusRepository.findOne({ where: { documentId } });
   }
 
+  //function to update ingestion
   async update(
     documentId: number,
     status: string,

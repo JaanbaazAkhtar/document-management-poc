@@ -16,6 +16,7 @@ export class DocumentsService {
     @Inject('INGESTION_SERVICE') private client: ClientProxy,
   ) {}
 
+  //function to create a user
   async create(createDocumentDto: CreateDocumentDto, userId: number): Promise<Document> {
     const user = await this.usersService.findOneById(userId);
     if (!user) {
@@ -59,6 +60,7 @@ export class DocumentsService {
     await this.documentRepository.delete(id);
   }
 
+  //function to create a trigger for Ingestion
   async triggerIngestion(id: number) {
     const document = await this.findOne(id);
     if (!document) {
@@ -70,6 +72,7 @@ export class DocumentsService {
     return this.findOne(id);
   }
 
+  //function to update ingestion status
   async updateIngestionStatus(documentId: number, status: string, message?: string): Promise<Document> {
     const document = await this.documentRepository.findOne({ where: { id: documentId } });
     if (!document) {

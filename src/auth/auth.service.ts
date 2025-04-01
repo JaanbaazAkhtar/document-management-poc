@@ -14,6 +14,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  //function to validate user
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.usersRepository.findOne({ where: { username } });
     if (user && await bcrypt.compare(pass, user.passwordHash)) {
@@ -31,6 +32,7 @@ export class AuthService {
     return { access_token: this.jwtService.sign(payload) };
   }
 
+  //function to register a user
   async register(registerDto: RegisterDto): Promise<User> {
     const existingUser = await this.usersRepository.findOne({ where: { username: registerDto.username } });
     if (existingUser) {

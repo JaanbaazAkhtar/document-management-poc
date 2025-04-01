@@ -16,7 +16,6 @@ export class DocumentsService {
     @Inject('INGESTION_SERVICE') private client: ClientProxy,
   ) {}
 
-  //function to create a user
   async create(createDocumentDto: CreateDocumentDto, userId: number): Promise<Document> {
     const user = await this.usersService.findOneById(userId);
     if (!user) {

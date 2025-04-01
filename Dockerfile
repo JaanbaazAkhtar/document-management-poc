@@ -4,9 +4,7 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN npm install --force 
-
-RUN npm rebuild bcrypt # Add this line
+RUN npm install --force  # Install dependencies
 
 COPY . .
 

@@ -5,7 +5,7 @@ services:
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: password # Ideally, use a more secure password in production
       POSTGRES_DB: document_rag
     ports:
       - '5432:5432'
@@ -23,17 +23,18 @@ services:
     ports:
       - '3000:3000'
     environment:
-      DATABASE_HOST: db
+      DATABASE_HOST: db # Use the service name, not localhost
       DATABASE_PORT: 5432
       DATABASE_USER: postgres
-      DATABASE_PASSWORD: password
-      DATABASE_NAME: document_rag
-      JWT_SECRET: your_secret_key
-      RABBITMQ_URL: amqp://rabbitmq:5672
+      DATABASE_PASSWORD: password # Match the DB password from the db service
+      DATABASE_NAME: document_rag # Match the DB name
+      JWT_SECRET: your_secret_key # Use a secure secret key
+      RABBITMQ_URL: amqp://rabbitmq:5672 # use the service name.
     depends_on:
       - db
       - rabbitmq
     volumes:
-      - ./uploads:/app/uploads 
+      - ./uploads:/usr/src/app/uploads # correct the volume mount path.
+
 volumes:
   db_data:
